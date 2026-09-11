@@ -3,7 +3,7 @@
 use anyhow::{Context, Result};
 use clap::{Args, Parser, Subcommand};
 use serde_json::{Value, json};
-use skopos::{graph, parse_events, pi, report, store, validation};
+use skopos::{feedback, graph, parse_events, pi, report, splits, store, validation};
 use std::{
     collections::BTreeSet,
     fs::File,
@@ -60,6 +60,18 @@ enum Command {
     },
     /// Show associations for one historical repository revision.
     Graph(Selection),
+    /// Join agent-reported unused spans to reads; output file/chapter split review candidates.
+    SplitCandidates {
+        file: String,
+        #[arg(long)]
+        repository: String,
+        #[arg(long)]
+        revision: String,
+        #[arg(long, default_value_t = 2)]
+        min_tasks: usize,
+        #[arg(long, default_value_t = 10)]
+        limit: usize,
+    },
 }
 
 #[derive(Args)]
@@ -158,6 +170,21 @@ fn execute(cli: Cli) -> Result<Value> {
             &selection.revision,
             selection.min_support,
         )?)?,
+        // §FS-feedback.3: Feedback is a sidecar, never a mutation of sealed observations.
+        Command::SplitCandidates {
+            file,
+            repository,
+            revision,
+            min_tasks,
+            limit,
+        } => splits::report(
+            &events,
+            &feedback::parse(input(&file)?)?,
+            &repository,
+            &revision,
+            min_tasks,
+            limit,
+        )?,
         Command::Import { .. } | Command::ImportPi { .. } => unreachable!(),
     })
 }

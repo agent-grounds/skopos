@@ -1,10 +1,12 @@
 //! Offline observations and analyses of context acquisition. §FS-ledger §FS-analysis
 
 pub mod event;
+pub mod feedback;
 pub mod graph;
 pub mod pi;
 mod pi_tools;
 pub mod report;
+pub mod splits;
 pub mod store;
 pub mod validation;
 

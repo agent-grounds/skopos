@@ -76,6 +76,8 @@ reports and descriptive differences. `status` lists stored runs and completion.
 `related PATH` and `graph` emit the associations defined below. All successful
 commands emit one JSON object with a versioned `schema`. Errors go to stderr
 with nonzero exit. No command changes agent behavior or contacts a network.
+`split-candidates FILE` joins agent feedback to the ledger without changing it.
+[§FS-feedback.3](requirements.md#3-split-candidate-report)
 
 # FS-pi: import a frozen Pi session branch
 
@@ -160,6 +162,71 @@ by source sample count. Steps with no recorded reads are outside this statistic.
 Sort by support descending, lift descending, then source/target path. Empty
 selections return zero samples/edges, without inventing observations. Outcomes
 are reported per run but are not used to infer causal effects.
+
+# FS-feedback: agent-reported unused spans
+
+Ask agents for the most significant lines they remember reading but not using
+in a completed task. These are retrospective nominations for file and chapter
+splits, not observed non-use or authorization to delete content. Keep subjective
+feedback separate from acquisition events. [§GOAL-utility](docs/goals.md#goal-utility-useful-decisions-before-a-larger-service) [§GOAL-evidence](docs/goals.md#goal-evidence-trustworthy-context-observations)
+
+## 1. End-of-task collection
+
+Provide a reusable prompt requesting zero to five ranked, one-based inclusive
+line spans. Each nomination identifies a recorded read event and path, confidence
+(`low`, `medium`, `high`), reason (`unrelated_to_task`, `excess_detail`,
+`duplicate_information`), and suggested action (`extract_file`, `extract_section`,
+`narrow_read`). Rank 1 is the agent's highest-priority review candidate. Consider
+implementation, reasoning, verification, and constraints, not just the final
+answer. Abstain when uncertain about coordinates or usefulness; never fill a
+quota, reread files solely to produce feedback, or nominate required conventions
+merely because they were not mentioned in the answer. Record no source quotes.
+
+One `skopos.feedback.v1` JSONL record identifies the feedback, completed run,
+repository, historical revision, reporting agent/session, and timestamp. Its
+`nominations` array may be empty: abstention is distinct from no feedback.
+Unknown fields are rejected. Ranks must be contiguous from 1, with at most five
+nominations and no duplicate path/range in one report. One report per
+run/agent/session is allowed; identical duplicate records are ignored, while
+conflicting IDs or repeated identities are errors.
+
+## 2. Evidence validation
+
+The run must already be sealed in the ledger. Repository, revision, and reporting
+agent/session must match its recorded events. Every nominated event must be a
+recorded non-filesystem read by that same agent/session/run, with the same path.
+An exact delivered range must contain the nominated range; otherwise a known
+requested range must not contradict it. Label range evidence `exact_delivered`,
+`requested_only`, or `unverified`. Agent confidence never upgrades range evidence
+or establishes non-use. Preserve source event, model, epoch, and Grund reference.
+
+Reject a nomination if a recorded edit to that path in the same run precedes its
+read: grouping by base revision cannot safely locate a post-edit range. Unknown
+edits and capture gaps remain limitations; validation is not proof of historical
+file identity. Never open the live file to reconstruct historical coordinates.
+
+## 3. Split-candidate report
+
+`split-candidates FILE --repository REPO --revision REV` reads feedback JSONL
+(`-` for stdin), joins it to the existing ledger, and emits `skopos.splits.v1`.
+Validate the whole input before reporting. This prototype keeps feedback in an
+explicit sidecar supplied by the caller, not in SQLite; it does not reopen sealed
+runs, contact agents, edit memory, or change any source file.
+
+Group identical path/range nominations only within the requested repository and
+revision. Do not silently merge overlapping or adjacent spans into a chapter.
+Report distinct task and report support, best nominated rank, and each supporting
+nomination's identity, reason, confidence, suggestion, and range evidence. Repeated
+runs or sibling agents on one task count as one task. Default `--min-tasks` is 2;
+`--limit` defaults to 10. Both must be positive. Sort by distinct tasks descending,
+best rank ascending, then path/start/end. Report counts before the limit and
+reporting-task/abstention coverage; missing feedback never means a span was used.
+
+These rankings identify review candidates, not unused-line probabilities or
+saved tokens. Use repeated nominations together with read profiles to choose
+where to investigate a coherent file or chapter boundary. Validate a proposed
+split with grounding, file-size gates, and held-out task outcomes before claiming
+an improvement.
 
 # FS-development: prototype verification
 

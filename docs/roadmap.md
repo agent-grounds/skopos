@@ -4,6 +4,11 @@ The first prototype implements offline import, provenance, local persistence,
 reread candidates, and descriptive associations. It does not establish the
 effectiveness of project-memory optimization. [§GOAL-utility](goals.md#goal-utility-useful-decisions-before-a-larger-service)
 
+End-of-task self-reports now identify candidate unused spans for file/chapter
+review. The prompt and read-only sidecar join are implemented; automatic workflow
+collection, persistent feedback ingestion, and overlap-aware chapter proposals
+are future work. [§FS-feedback.3](../requirements.md#3-split-candidate-report)
+
 ## 1. Capture fidelity
 
 Add a runtime boundary adapter that can observe final model request payloads,
@@ -26,6 +31,9 @@ training and evaluation tasks, frozen revisions/models, matched budgets, and
 repeated executions. Compare profile-guided section discovery or memory changes
 with the existing workflow and simple citation/lexical/co-change baselines.
 Measure executable task success, provider usage/cost, latency, and capture cost.
+Evaluate splits suggested by repeated agent feedback against size-only splitting
+and simple selective-read baselines. Measure feedback collection cost and
+agreement across tasks; agent recollection alone does not establish non-use.
 A provisional target is a repeatable 15% cost reduction without meaningful
 quality loss; a small pilot alone cannot establish noninferiority. Include
 required project conventions even if infrequently observed.

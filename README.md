@@ -36,6 +36,8 @@ snapshot is safe and adds no duplicate events. [§FS-ledger.1](requirements.md#1
   conditional probability, Jaccard, lift, and next-recorded-step probability.
 - Separate agent/session/model/epoch samples, optional requested/delivered ranges
   and Grund section references, and explicit provenance and missing values.
+- An end-of-task feedback prompt and `split-candidates` report for agent-nominated
+  unused spans, kept separate from measured reads. [§FS-feedback](requirements.md#fs-feedback-agent-reported-unused-spans)
 
 The behavior is specified in [requirements.md](requirements.md).
 [§FS-events](requirements.md#fs-events-versioned-observations) [§FS-pi](requirements.md#fs-pi-import-a-frozen-pi-session-branch) [§FS-ledger](requirements.md#fs-ledger-local-transactional-import) [§FS-analysis](requirements.md#fs-analysis-descriptive-context-profiles)
@@ -62,6 +64,21 @@ later accounting joins. Native Rhei accounting import is planned, not implemente
 [§FS-events.1](requirements.md#1-identity-and-scope) [§FS-ledger.2](requirements.md#2-cli)
 
 ## How to interpret results
+
+Agents can nominate up to five spans they believe they read without using.
+Collect these with the [end-of-task prompt](docs/agent-feedback.md), then join
+the response sidecar to recorded reads:
+
+```bash
+cargo run -- split-candidates /path/to/feedback.jsonl \
+  --repository agent-grounds/example --revision COMMIT_AT_RUN_TIME
+```
+
+The report ranks exact file/range matches by distinct-task support and agent
+priority. It distinguishes known delivered spans from requested or unverified
+coordinates, preserves confidence and reasons, and accepts an empty response.
+Use repeated nominations to investigate file or chapter splits, not to delete
+content or claim savings. No agent is contacted automatically. [§FS-feedback.3](requirements.md#3-split-candidate-report)
 
 A native transcript establishes recorded tool output. It does **not** establish
 final model submission, retention after compaction, attention, necessity, or

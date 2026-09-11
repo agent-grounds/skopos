@@ -13,3 +13,9 @@ selection; `pi_tools` translates supported tool results. `report` and `graph`
 derive separate views from the same immutable records. `main` only orchestrates
 these components. Test native formats using synthetic data, never real prompts
 or local session files. [§FS-pi.1](../../requirements.md#1-tree-selection) [§FS-pi.2](../../requirements.md#2-tool-results) [§FS-analysis.1](../../requirements.md#1-per-run-reports) [§FS-analysis.2](../../requirements.md#2-associations)
+
+`feedback` validates a separate agent-reported JSONL contract and its references
+to recorded reads. `splits` derives review candidates without altering the event
+ledger. Keeping retrospective annotations outside the acquisition event stream
+preserves run sealing and distinguishes agent recollection from observation.
+[§FS-feedback.2](../../requirements.md#2-evidence-validation) [§FS-feedback.3](../../requirements.md#3-split-candidate-report)
