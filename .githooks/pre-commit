@@ -1,0 +1,6 @@
+#!/bin/sh
+# Reproducible local checks before a commit. §FS-development.1
+set -eu
+cargo fmt --check
+grund check
+fissile check --staged
