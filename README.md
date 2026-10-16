@@ -111,7 +111,7 @@ fissile audit
 git config core.hooksPath .githooks
 ```
 
-CI pins Grund 0.13.1 and Fissile 0.9.1; these published versions are the gate.
+CI pins Grund 0.18.0 and Fissile 0.9.1; these published versions are the gate.
 The optional pre-commit hook runs formatting, grounding, and staged file-size
 checks using locally installed tools. Work in branch worktrees. [§FS-development.1](requirements.md#1-gates)
 
