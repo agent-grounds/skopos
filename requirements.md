@@ -237,6 +237,6 @@ The repository should remain reproducible and grounded as the experiment evolves
 
 CI checks formatting, Clippy without warnings, all Rust test targets, Grund, and
 Fissile's full-tree audit. Use the checked-in Cargo lockfile. Pin published Grund
-0.13.1 and Fissile 0.9.1 for CI; newer local tools do not redefine the gate.
+0.18.0 and Fissile 0.9.1 for CI; newer local tools do not redefine the gate.
 The optional `.githooks/pre-commit` checks formatting, grounding, and staged size
 budgets. It does not install tools or modify sources.
