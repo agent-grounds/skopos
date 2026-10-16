@@ -24,12 +24,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p "$RUNNER_TEMP/skopos-gates"
-          gh release download v0.13.1 --repo agent-grounds/grund --pattern 'grund-0.13.1-x86_64-unknown-linux-gnu.tar.gz*' --dir "$RUNNER_TEMP/skopos-gates"
+          gh release download v0.18.0 --repo agent-grounds/grund --pattern 'grund-0.18.0-x86_64-unknown-linux-gnu.tar.gz*' --dir "$RUNNER_TEMP/skopos-gates"
           gh release download v0.9.1 --repo agent-grounds/fissile --pattern 'fissile-0.9.1-x86_64-unknown-linux-gnu.tar.gz*' --dir "$RUNNER_TEMP/skopos-gates"
           cd "$RUNNER_TEMP/skopos-gates"
-          sha256sum -c grund-0.13.1-x86_64-unknown-linux-gnu.tar.gz.sha256
+          sha256sum -c grund-0.18.0-x86_64-unknown-linux-gnu.tar.gz.sha256
           sha256sum -c fissile-0.9.1-x86_64-unknown-linux-gnu.tar.gz.sha256
-          tar -xzf grund-0.13.1-x86_64-unknown-linux-gnu.tar.gz --strip-components=1 grund-0.13.1-x86_64-unknown-linux-gnu/grund
+          tar -xzf grund-0.18.0-x86_64-unknown-linux-gnu.tar.gz --strip-components=1 grund-0.18.0-x86_64-unknown-linux-gnu/grund
           tar -xzf fissile-0.9.1-x86_64-unknown-linux-gnu.tar.gz --strip-components=1 fissile-0.9.1-x86_64-unknown-linux-gnu/fissile
       - name: Check grounding and file sizes
         run: |
